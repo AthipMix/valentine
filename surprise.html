@@ -3,164 +3,79 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>For You 💕</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Kanit',sans-serif;}
-
 html,body{
   margin:0;
   padding:0;
   width:100%;
   height:100%;
 }
+
 body{
-  background:radial-gradient(circle,#ff1493,#000);
-  color:white;
-  text-align:center;
-  overflow:hidden;
   min-height:100vh;
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
+  background:radial-gradient(circle,#ff1493,#000);
+  font-family:'Kanit',sans-serif;
+  color:white;
+  text-align:center;
+  overflow:hidden;
   padding:20px;
 }
 
 h1{
-  font-size:8vw;   /* ปรับตามหน้าจอมือถือ */
+  font-size:clamp(28px,8vw,60px);
   text-shadow:0 0 25px white;
+  animation:glow 2s infinite alternate;
+}
+
+@keyframes glow{
+  from{text-shadow:0 0 10px white;}
+  to{text-shadow:0 0 30px hotpink;}
 }
 
 p{
-  font-size:4.5vw;
-  margin-top:10px;
+  font-size:clamp(16px,4.5vw,24px);
 }
 
-button{
-  padding:12px 30px;
-  border:none;
-  border-radius:30px;
-  background:linear-gradient(45deg,#ff69b4,#ff1493);
-  color:white;
-  margin-top:20px;
-  font-size:4vw;
-  box-shadow:0 0 20px white;
-}
-
-.frame{
-  position:relative;
-  width:80vw;
-  max-width:350px;
-  height:100vw;
-  max-height:450px;
-  border:8px solid white;
-  border-radius:20px;
-  overflow:hidden;
-  box-shadow:0 0 40px white;
-  margin-top:20px;
-}
-
-.frame img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-
-canvas{
-  position:absolute;
-  top:0;
-  left:0;
-}
 </style>
 </head>
 <body>
 
 <h1>Happy Valentine 💖</h1>
-<p>ขอบคุณที่อยู่ด้วยกันนะคนเก่ง 🌹</p>
+<p>รักเธอที่สุดเลยนะ ขอบคุณที่อยู่ด้วยกัน 🌹</p>
 
-<button onclick="startMusic()">กดเพื่อเปิดเพลง 💕</button>
-<button onclick="showScratch()">ดูเซอร์ไพรส์ 💌</button>
-
-<div id="player"></div>
-
-<div class="frame" id="scratchBox" style="display:none;">
-  <img src="image/S__20946963.jpg">
-  <canvas id="scratch"></canvas>
-</div>
-
-<script src="https://www.youtube.com/iframe_api"></script>
+<!-- 🎵 เพลง -->
+<audio id="bgMusic" autoplay loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
 
 <script>
-let player;
-let ready=false;
+const music = document.getElementById("bgMusic");
+music.volume = 0;
 
-function onYouTubeIframeAPIReady() {
-  player = new YT.Player('player', {
-    height:'0',
-    width:'0',
-    videoId:'N9bashij_7c',
-    playerVars:{
-      autoplay:0,
-      controls:0,
-      loop:1,
-      playlist:'N9bashij_7c'
-    },
-    events:{
-      onReady:function(){ ready=true; }
-    }
+window.addEventListener("load", () => {
+  music.play().then(() => {
+    let vol = 0;
+    const fade = setInterval(() => {
+      if (vol < 1) {
+        vol += 0.05;
+        music.volume = vol;
+      } else {
+        clearInterval(fade);
+      }
+    }, 200);
+  }).catch(()=>{
+    console.log("Autoplay ถูกบล็อก");
   });
-}
-
-function startMusic(){
-  if(ready){
-    player.unMute();
-    player.playVideo();
-  }
-}
-
-function showScratch(){
-  document.getElementById("scratchBox").style.display="block";
-  initScratch();
-}
-
-function initScratch(){
-  const canvas=document.getElementById("scratch");
-  const ctx=canvas.getContext("2d");
-  const frame=document.querySelector(".frame");
-
-  canvas.width=frame.offsetWidth;
-  canvas.height=frame.offsetHeight;
-
-  let gradient=ctx.createLinearGradient(0,0,canvas.width,canvas.height);
-  gradient.addColorStop(0,"#ff69b4");
-  gradient.addColorStop(1,"#ff1493");
-
-  ctx.fillStyle=gradient;
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-
-  ctx.globalCompositeOperation="destination-out";
-
-  let isDrawing=false;
-
-  function scratch(e){
-    if(!isDrawing)return;
-    const rect=canvas.getBoundingClientRect();
-    const x=(e.touches?e.touches[0].clientX:e.clientX)-rect.left;
-    const y=(e.touches?e.touches[0].clientY:e.clientY)-rect.top;
-    ctx.beginPath();
-    ctx.arc(x,y,35,0,Math.PI*2);
-    ctx.fill();
-  }
-
-  canvas.addEventListener("mousedown",()=>isDrawing=true);
-  canvas.addEventListener("mouseup",()=>isDrawing=false);
-  canvas.addEventListener("mousemove",scratch);
-  canvas.addEventListener("touchstart",()=>isDrawing=true);
-  canvas.addEventListener("touchend",()=>isDrawing=false);
-  canvas.addEventListener("touchmove",scratch);
-}
+});
 </script>
 
 </body>
