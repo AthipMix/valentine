@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>For You 💕</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Kanit',sans-serif;}
+body{
+  overflow:hidden;
+  background:radial-gradient(circle,#ff1493,#000);
+  color:white;
+  text-align:center;
+}
+
+.page{
+  position:fixed;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+}
+
+h1{ text-shadow:0 0 25px white; margin-bottom:20px; }
+
+button{
+  padding:12px 28px;
+  border:none;
+  border-radius:30px;
+  cursor:pointer;
+  background:linear-gradient(45deg,#ff69b4,#ff1493);
+  color:white;
+  box-shadow:0 0 20px white;
+  margin-top:25px;
+}
+
+.frame{
+  position:relative;
+  width:300px;
+  height:400px;
+  border:8px solid white;
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 0 40px white;
+}
+
+.frame img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+canvas{position:absolute;left:0;top:0;}
+
+.flower{
+  position:fixed;
+  top:-50px;
+  font-size:24px;
+  animation:fall linear forwards;
+}
+
+@keyframes fall{
+  to{transform:translateY(110vh);opacity:0;}
+}
+
+.heart{
+  position:fixed;
+  animation:float 6s linear infinite;
+}
+
+@keyframes float{
+  from{transform:translateY(100vh);}
+  to{transform:translateY(-10vh);}
+}
+</style>
+</head>
+<body>
+
+<div id="player"></div>
+
+<div class="page" id="page2">
+  <h1>Happy Valentine Day 💕</h1>
+  <p>ขอบคุณที่อยู่ด้วยกันเสมอ 🌹</p>
+  <button onclick="goPage3()">กดเพื่อดูเซอร์ไพรส์ 💌</button>
+</div>
+
+<div class="page" id="page3" style="display:none;">
+  <h1>ลูบหน้าจอเพื่อเปิดภาพ 💘</h1>
+  <div class="frame">
+    <img src="image/S__20946963.jpg">
+    <canvas id="scratch"></canvas>
+  </div>
+</div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+
+<script>
+let player;
+
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('player', {
+    height: '0',
+    width: '0',
+    videoId: 'N9bashij_7c',
+    playerVars: {
+      autoplay: 1,
+      controls: 0,
+      loop: 1,
+      playlist: 'N9bashij_7c'
+    },
+    events: {
+      onReady: function(event){
+        event.target.unMute();
+        event.target.playVideo();
+      }
+    }
+  });
+}
+
+function goPage3(){
+  document.getElementById("page2").style.display="none";
+  document.getElementById("page3").style.display="flex";
+  initScratch();
+}
+
+// 🌹 ดอกไม้โปรย
+setInterval(()=>{
+  const flower=document.createElement("div");
+  flower.className="flower";
+  flower.innerText=["🌹","🌸","🌷","🌺"][Math.floor(Math.random()*4)];
+  flower.style.left=Math.random()*100+"vw";
+  flower.style.animationDuration=3+Math.random()*3+"s";
+  document.body.appendChild(flower);
+  setTimeout(()=>flower.remove(),6000);
+},300);
+
+// 💞 หัวใจลอย
+setInterval(()=>{
+  const heart=document.createElement("div");
+  heart.className="heart";
+  heart.innerText="💖";
+  heart.style.left=Math.random()*100+"vw";
+  heart.style.fontSize=20+Math.random()*20+"px";
+  document.body.appendChild(heart);
+  setTimeout(()=>heart.remove(),6000);
+},800);
+
+// Scratch
+function initScratch(){
+  const canvas=document.getElementById("scratch");
+  const ctx=canvas.getContext("2d");
+  const frame=document.querySelector(".frame");
+
+  canvas.width=frame.offsetWidth;
+  canvas.height=frame.offsetHeight;
+
+  let gradient = ctx.createLinearGradient(0,0,canvas.width,canvas.height);
+  gradient.addColorStop(0,"#ff69b4");
+  gradient.addColorStop(1,"#ff1493");
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  ctx.globalCompositeOperation="destination-out";
+
+  let isDrawing=false;
+
+  function scratch(e){
+    if(!isDrawing)return;
+    const rect=canvas.getBoundingClientRect();
+    const x=(e.touches?e.touches[0].clientX:e.clientX)-rect.left;
+    const y=(e.touches?e.touches[0].clientY:e.clientY)-rect.top;
+    ctx.beginPath();
+    ctx.arc(x,y,30,0,Math.PI*2);
+    ctx.fill();
+  }
+
+  canvas.addEventListener("mousedown",()=>isDrawing=true);
+  canvas.addEventListener("mouseup",()=>isDrawing=false);
+  canvas.addEventListener("mousemove",scratch);
+  canvas.addEventListener("touchstart",()=>isDrawing=true);
+  canvas.addEventListener("touchend",()=>isDrawing=false);
+  canvas.addEventListener("touchmove",scratch);
+}
+</script>
+
+</body>
+</html>
