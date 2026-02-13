@@ -4,67 +4,62 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>For You 💕</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Kanit',sans-serif;}
+
 html,body{
   margin:0;
   padding:0;
   width:100%;
   height:100%;
 }
-
 body{
+  background:radial-gradient(circle,#ff1493,#000);
+  color:white;
+  text-align:center;
+  overflow:hidden;
   min-height:100vh;
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  background:radial-gradient(circle,#ff1493,#000);
-  font-family:'Kanit',sans-serif;
-  color:white;
-  text-align:center;
   padding:20px;
 }
 
 h1{
-  font-size:clamp(28px,8vw,60px);
+  font-size:8vw;   /* ปรับตามหน้าจอมือถือ */
   text-shadow:0 0 25px white;
 }
 
 p{
-  font-size:clamp(16px,4.5vw,24px);
-  margin-bottom:20px;
+  font-size:4.5vw;
+  margin-top:10px;
 }
 
 button{
-  padding:14px 35px;
+  padding:12px 30px;
   border:none;
   border-radius:30px;
   background:linear-gradient(45deg,#ff69b4,#ff1493);
   color:white;
-  font-size:clamp(14px,4vw,20px);
+  margin-top:20px;
+  font-size:4vw;
   box-shadow:0 0 20px white;
-  cursor:pointer;
-  transition:0.3s;
-}
-
-button:hover{
-  transform:scale(1.05);
 }
 
 .frame{
   position:relative;
-  width:90vw;
-  max-width:380px;
-  aspect-ratio:3/4;
+  width:80vw;
+  max-width:350px;
+  height:100vw;
+  max-height:450px;
   border:8px solid white;
   border-radius:20px;
   overflow:hidden;
   box-shadow:0 0 40px white;
   margin-top:20px;
-  display:none;
 }
 
 .frame img{
@@ -83,45 +78,68 @@ canvas{
 <body>
 
 <h1>Happy Valentine 💖</h1>
-<p>กดปุ่มด้านล่างเพื่อดูเซอร์ไพรส์ของเรา 🌹</p>
+<p>ขอบคุณที่อยู่ด้วยกันนะคนเก่ง 🌹</p>
 
-<button onclick="startSurprise()">ดูผลลัพธ์ 💕</button>
+<button onclick="startMusic()">กดเพื่อเปิดเพลง 💕</button>
+<button onclick="showScratch()">ดูเซอร์ไพรส์ 💌</button>
 
-<div class="frame" id="scratchBox">
+<div id="player"></div>
+
+<div class="frame" id="scratchBox" style="display:none;">
   <img src="image/S__20946963.jpg">
   <canvas id="scratch"></canvas>
 </div>
 
-<!-- 🎵 เพลง -->
-<audio id="bgMusic" loop>
-  <source src="music.mp3" type="audio/mpeg">
-</audio>
+<script src="https://www.youtube.com/iframe_api"></script>
 
 <script>
-const music = document.getElementById("bgMusic");
-const frame = document.getElementById("scratchBox");
+let player;
+let ready=false;
 
-function startSurprise(){
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('player', {
+    height:'0',
+    width:'0',
+    videoId:'N9bashij_7c',
+    playerVars:{
+      autoplay:0,
+      controls:0,
+      loop:1,
+      playlist:'N9bashij_7c'
+    },
+    events:{
+      onReady:function(){ ready=true; }
+    }
+  });
+}
 
-  // เล่นเพลงทันที
-  music.play();
+function startMusic(){
+  if(ready){
+    player.unMute();
+    player.playVideo();
+  }
+}
 
-  // แสดงรูปขูด
-  frame.style.display="block";
-
-  // เริ่มระบบขูด
+function showScratch(){
+  document.getElementById("scratchBox").style.display="block";
   initScratch();
 }
 
 function initScratch(){
   const canvas=document.getElementById("scratch");
   const ctx=canvas.getContext("2d");
+  const frame=document.querySelector(".frame");
 
   canvas.width=frame.offsetWidth;
   canvas.height=frame.offsetHeight;
 
-  ctx.fillStyle="#ff69b4";
+  let gradient=ctx.createLinearGradient(0,0,canvas.width,canvas.height);
+  gradient.addColorStop(0,"#ff69b4");
+  gradient.addColorStop(1,"#ff1493");
+
+  ctx.fillStyle=gradient;
   ctx.fillRect(0,0,canvas.width,canvas.height);
+
   ctx.globalCompositeOperation="destination-out";
 
   let isDrawing=false;
@@ -132,14 +150,13 @@ function initScratch(){
     const x=(e.touches?e.touches[0].clientX:e.clientX)-rect.left;
     const y=(e.touches?e.touches[0].clientY:e.clientY)-rect.top;
     ctx.beginPath();
-    ctx.arc(x,y,30,0,Math.PI*2);
+    ctx.arc(x,y,35,0,Math.PI*2);
     ctx.fill();
   }
 
   canvas.addEventListener("mousedown",()=>isDrawing=true);
   canvas.addEventListener("mouseup",()=>isDrawing=false);
   canvas.addEventListener("mousemove",scratch);
-
   canvas.addEventListener("touchstart",()=>isDrawing=true);
   canvas.addEventListener("touchend",()=>isDrawing=false);
   canvas.addEventListener("touchmove",scratch);
