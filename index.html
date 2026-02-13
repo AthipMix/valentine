@@ -2,6 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Happy Valentine 💖</title>
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
 
@@ -20,6 +21,7 @@ body{
   text-align:center;
   overflow:hidden;
   animation:fadeIn 2s ease-in-out;
+  padding:20px;
 }
 
 @keyframes fadeIn{
@@ -28,6 +30,7 @@ body{
 }
 
 h1{
+  font-size:8vw;
   text-shadow:0 0 25px white;
   animation:glow 2s infinite alternate;
 }
@@ -46,9 +49,18 @@ h1{
   animation:floatQR 3s ease-in-out infinite;
 }
 
+.qr-box img{
+  width:60vw;
+  max-width:250px;
+}
+
 @keyframes floatQR{
   0%,100%{transform:translateY(0);}
   50%{transform:translateY(-10px);}
+}
+
+p{
+  font-size:4.5vw;
 }
 
 .heart{
@@ -71,17 +83,6 @@ h1{
 @keyframes fall{
   to{transform:translateY(110vh);opacity:0;}
 }
-
-button{
-  margin-top:15px;
-  padding:10px 25px;
-  border:none;
-  border-radius:30px;
-  background:linear-gradient(45deg,#ff69b4,#ff1493);
-  color:white;
-  cursor:pointer;
-  box-shadow:0 0 15px white;
-}
 </style>
 </head>
 <body>
@@ -89,41 +90,12 @@ button{
 <h1>Happy วันวาเลนไทน์ 💖</h1>
 
 <div class="qr-box">
-  <!-- 🔥 เปลี่ยน username ให้เป็น GitHub ของคุณ -->
-  <img width="200" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://athipmix.github.io/valentine/surprise.html">
+  <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://athipmix.github.io/valentine/surprise.html">
 </div>
 
 <p>สแกน QR เพื่อดูเซอร์ไพรส์ 🎁</p>
+
 <script>
-let player;
-let isReady=false;
-
-function onYouTubeIframeAPIReady() {
-  player = new YT.Player('player', {
-    height: '0',
-    width: '0',
-    videoId: 'N9bashij_7c',
-    playerVars: {
-      autoplay: 0,
-      controls: 0,
-      loop: 1,
-      playlist: 'N9bashij_7c'
-    },
-    events:{
-      onReady:function(){
-        isReady=true;
-      }
-    }
-  });
-}
-
-function startMusic(){
-  if(isReady){
-    player.unMute();
-    player.playVideo();
-  }
-}
-
 // 💞 หัวใจลอย
 setInterval(()=>{
   const heart=document.createElement("div");
@@ -146,5 +118,6 @@ setInterval(()=>{
   setTimeout(()=>flower.remove(),6000);
 },400);
 </script>
+
 </body>
 </html>
