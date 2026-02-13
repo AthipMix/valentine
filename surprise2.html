@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>For You 💕</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+html,body{
+  margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+}
+
+body{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  background:radial-gradient(circle,#ff1493,#000);
+  font-family:'Kanit',sans-serif;
+  color:white;
+  text-align:center;
+  overflow:hidden;
+  padding:20px;
+}
+
+h1{
+  font-size:clamp(28px,8vw,60px);
+  text-shadow:0 0 25px white;
+  animation:glow 2s infinite alternate;
+}
+
+@keyframes glow{
+  from{text-shadow:0 0 10px white;}
+  to{text-shadow:0 0 30px hotpink;}
+}
+
+p{
+  font-size:clamp(16px,4.5vw,24px);
+}
+
+</style>
+</head>
+<body>
+
+<h1>Happy Valentine 💖</h1>
+<p>รักเธอที่สุดเลยนะ ขอบคุณที่อยู่ด้วยกัน 🌹</p>
+
+<!-- 🎵 เพลง -->
+<audio id="bgMusic" autoplay loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const music = document.getElementById("bgMusic");
+music.volume = 0;
+
+window.addEventListener("load", () => {
+  music.play().then(() => {
+    let vol = 0;
+    const fade = setInterval(() => {
+      if (vol < 1) {
+        vol += 0.05;
+        music.volume = vol;
+      } else {
+        clearInterval(fade);
+      }
+    }, 200);
+  }).catch(()=>{
+    console.log("Autoplay ถูกบล็อก");
+  });
+});
+</script>
+
+</body>
+</html>
