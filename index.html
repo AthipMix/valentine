@@ -6,8 +6,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
 body{
-  margin:0;
   height:100vh;
   display:flex;
   flex-direction:column;
@@ -17,9 +18,24 @@ body{
   font-family:'Kanit',sans-serif;
   color:white;
   text-align:center;
+  overflow:hidden;
+  animation:fadeIn 2s ease-in-out;
 }
 
-h1{ text-shadow:0 0 20px white; }
+@keyframes fadeIn{
+  from{opacity:0;}
+  to{opacity:1;}
+}
+
+h1{
+  text-shadow:0 0 25px white;
+  animation:glow 2s infinite alternate;
+}
+
+@keyframes glow{
+  from{text-shadow:0 0 10px white;}
+  to{text-shadow:0 0 30px hotpink;}
+}
 
 .qr-box{
   background:white;
@@ -27,6 +43,44 @@ h1{ text-shadow:0 0 20px white; }
   border-radius:20px;
   box-shadow:0 0 25px hotpink;
   margin:20px 0;
+  animation:floatQR 3s ease-in-out infinite;
+}
+
+@keyframes floatQR{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-10px);}
+}
+
+.heart{
+  position:fixed;
+  animation:float 6s linear infinite;
+}
+
+@keyframes float{
+  from{transform:translateY(100vh);}
+  to{transform:translateY(-10vh);}
+}
+
+.flower{
+  position:fixed;
+  top:-50px;
+  font-size:24px;
+  animation:fall linear forwards;
+}
+
+@keyframes fall{
+  to{transform:translateY(110vh);opacity:0;}
+}
+
+button{
+  margin-top:15px;
+  padding:10px 25px;
+  border:none;
+  border-radius:30px;
+  background:linear-gradient(45deg,#ff69b4,#ff1493);
+  color:white;
+  cursor:pointer;
+  box-shadow:0 0 15px white;
 }
 </style>
 </head>
@@ -36,11 +90,61 @@ h1{ text-shadow:0 0 20px white; }
 
 <div class="qr-box">
   <!-- 🔥 เปลี่ยน username ให้เป็น GitHub ของคุณ -->
-  <img width="200"
-  src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://athipmix.github.io/valentine/surprise.html">
+  <img width="200" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://athipmix.github.io/valentine/surprise.html">
 </div>
 
 <p>สแกน QR เพื่อดูเซอร์ไพรส์ 🎁</p>
+<script>
+let player;
+let isReady=false;
 
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('player', {
+    height: '0',
+    width: '0',
+    videoId: 'N9bashij_7c',
+    playerVars: {
+      autoplay: 0,
+      controls: 0,
+      loop: 1,
+      playlist: 'N9bashij_7c'
+    },
+    events:{
+      onReady:function(){
+        isReady=true;
+      }
+    }
+  });
+}
+
+function startMusic(){
+  if(isReady){
+    player.unMute();
+    player.playVideo();
+  }
+}
+
+// 💞 หัวใจลอย
+setInterval(()=>{
+  const heart=document.createElement("div");
+  heart.className="heart";
+  heart.innerText="💖";
+  heart.style.left=Math.random()*100+"vw";
+  heart.style.fontSize=20+Math.random()*20+"px";
+  document.body.appendChild(heart);
+  setTimeout(()=>heart.remove(),6000);
+},800);
+
+// 🌸 ดอกไม้โปรย
+setInterval(()=>{
+  const flower=document.createElement("div");
+  flower.className="flower";
+  flower.innerText=["🌹","🌸","🌷","🌺"][Math.floor(Math.random()*4)];
+  flower.style.left=Math.random()*100+"vw";
+  flower.style.animationDuration=3+Math.random()*3+"s";
+  document.body.appendChild(flower);
+  setTimeout(()=>flower.remove(),6000);
+},400);
+</script>
 </body>
 </html>
