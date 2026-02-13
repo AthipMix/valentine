@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>For You 💕</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
@@ -26,56 +25,125 @@ body{
   font-family:'Kanit',sans-serif;
   color:white;
   text-align:center;
-  overflow:hidden;
   padding:20px;
 }
 
 h1{
   font-size:clamp(28px,8vw,60px);
   text-shadow:0 0 25px white;
-  animation:glow 2s infinite alternate;
-}
-
-@keyframes glow{
-  from{text-shadow:0 0 10px white;}
-  to{text-shadow:0 0 30px hotpink;}
 }
 
 p{
   font-size:clamp(16px,4.5vw,24px);
+  margin-bottom:20px;
 }
 
+button{
+  padding:14px 35px;
+  border:none;
+  border-radius:30px;
+  background:linear-gradient(45deg,#ff69b4,#ff1493);
+  color:white;
+  font-size:clamp(14px,4vw,20px);
+  box-shadow:0 0 20px white;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+button:hover{
+  transform:scale(1.05);
+}
+
+.frame{
+  position:relative;
+  width:90vw;
+  max-width:380px;
+  aspect-ratio:3/4;
+  border:8px solid white;
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 0 40px white;
+  margin-top:20px;
+  display:none;
+}
+
+.frame img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+canvas{
+  position:absolute;
+  top:0;
+  left:0;
+}
 </style>
 </head>
 <body>
 
 <h1>Happy Valentine 💖</h1>
-<p>รักเธอที่สุดเลยนะ ขอบคุณที่อยู่ด้วยกัน 🌹</p>
+<p>กดปุ่มด้านล่างเพื่อดูเซอร์ไพรส์ของเรา 🌹</p>
+
+<button onclick="startSurprise()">ดูผลลัพธ์ 💕</button>
+
+<div class="frame" id="scratchBox">
+  <img src="image/S__20946963.jpg">
+  <canvas id="scratch"></canvas>
+</div>
 
 <!-- 🎵 เพลง -->
-<audio id="bgMusic" autoplay loop>
+<audio id="bgMusic" loop>
   <source src="music.mp3" type="audio/mpeg">
 </audio>
 
 <script>
 const music = document.getElementById("bgMusic");
-music.volume = 0;
+const frame = document.getElementById("scratchBox");
 
-window.addEventListener("load", () => {
-  music.play().then(() => {
-    let vol = 0;
-    const fade = setInterval(() => {
-      if (vol < 1) {
-        vol += 0.05;
-        music.volume = vol;
-      } else {
-        clearInterval(fade);
-      }
-    }, 200);
-  }).catch(()=>{
-    console.log("Autoplay ถูกบล็อก");
-  });
-});
+function startSurprise(){
+
+  // เล่นเพลงทันที
+  music.play();
+
+  // แสดงรูปขูด
+  frame.style.display="block";
+
+  // เริ่มระบบขูด
+  initScratch();
+}
+
+function initScratch(){
+  const canvas=document.getElementById("scratch");
+  const ctx=canvas.getContext("2d");
+
+  canvas.width=frame.offsetWidth;
+  canvas.height=frame.offsetHeight;
+
+  ctx.fillStyle="#ff69b4";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.globalCompositeOperation="destination-out";
+
+  let isDrawing=false;
+
+  function scratch(e){
+    if(!isDrawing)return;
+    const rect=canvas.getBoundingClientRect();
+    const x=(e.touches?e.touches[0].clientX:e.clientX)-rect.left;
+    const y=(e.touches?e.touches[0].clientY:e.clientY)-rect.top;
+    ctx.beginPath();
+    ctx.arc(x,y,30,0,Math.PI*2);
+    ctx.fill();
+  }
+
+  canvas.addEventListener("mousedown",()=>isDrawing=true);
+  canvas.addEventListener("mouseup",()=>isDrawing=false);
+  canvas.addEventListener("mousemove",scratch);
+
+  canvas.addEventListener("touchstart",()=>isDrawing=true);
+  canvas.addEventListener("touchend",()=>isDrawing=false);
+  canvas.addEventListener("touchmove",scratch);
+}
 </script>
 
 </body>
